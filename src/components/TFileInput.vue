@@ -132,7 +132,7 @@
 <style scoped>
 	.form {
 		display: flex;
-		height: 400px;
+		height: 200px;
 		width: 100%;
 		margin: auto;
 		border-radius: 4px;
