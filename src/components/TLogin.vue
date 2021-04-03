@@ -62,10 +62,11 @@ export default {
       if (this.isValid && this.login && this.password) {
         const user = users.find(user => user.login === this.login && user.password === this.password);
 
-        if (user) {
+        if (user?.id) {
           sessionStorage.setItem('user_id', user.id);
+          this.$emit('login');
         }
-        this.$emit('login');
+
       }
     },
   },
