@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb-8">
     <v-card-title>
       Archive
       <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
         :headers="headers"
         :items="items"
         :search="search"
-        items-per-page="-1"
+        :items-per-page=-1
         hide-default-footer
         class="elevation-1"
     >
