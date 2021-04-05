@@ -12,7 +12,7 @@
             label="Login"
             required
             class="mb-4"
-        ></v-text-field>
+        />
 
         <v-text-field
             v-model="password"
@@ -21,7 +21,7 @@
             type="password"
             required
             class="mb-4"
-        ></v-text-field>
+        />
 
         <v-btn
             :disabled="!isValid"
@@ -65,8 +65,11 @@ export default {
         if (user?.id) {
           sessionStorage.setItem('user_id', user.id);
           this.$emit('login');
+        } else {
+          this.$emit('update:error', 'Invalid login or password. Please, try again');
         }
-
+      } else {
+        this.$emit('update:error', 'Invalid login or password. Please, try again');
       }
     },
   },

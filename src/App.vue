@@ -1,48 +1,67 @@
 <template>
-  <v-app>
-    <v-app-bar
-        app
-        light
-        class="justify-center accent"
-    >
-      <v-container fluid>
-        <h1 class="title text-center d-flex justify-center text--primary">TRANSCRIBER</h1>
-      </v-container>
-    </v-app-bar>
+	<v-app>
+		<v-app-bar
+			app
+			light
+			class="justify-center accent"
+		>
+			<v-container fluid>
+				<h1 class="title text-center d-flex justify-center text--primary">TRANSCRIBER</h1>
+			</v-container>
+		</v-app-bar>
 
-    <v-main>
-      <t-login v-if="!isAuthorized"
-      @login="login" />
-      <t-app v-else></t-app>
+		<v-main>
+			<t-login
+				v-if="!isAuthorized"
+				@login="login"
+				@update:error="error = $event"
+			/>
+			<t-app
+				v-else
+				@update:error="error = $event"
+			/>
+			{{ error }}
+		</v-main>
 
-    </v-main>
-  </v-app>
+		<t-error
+			v-if="error"
+			:error="error"
+			@close="resetError"
+		/>
+	</v-app>
 </template>
 
 <script>
-import TLogin from "@/components/TLogin";
-import TApp from "@/components/TApp";
+  import TLogin from "@/components/TLogin";
+  import TApp from "@/components/TApp";
+  import TError from "./components/TError";
 
-export default {
-  name: 'App',
+  export default {
+    name: 'App',
 
-  components: {
-    TApp,
-    TLogin,
-  },
+    components: {
+      TError,
+      TApp,
+      TLogin,
+    },
 
-  data: () => ({
-    isAuthorized: false,
-  }),
+    data: () => ({
+      isAuthorized: false,
+      error: '',
+    }),
 
-  mounted() {
+    mounted() {
       this.isAuthorized = sessionStorage.getItem('user_id');
-  },
+    },
 
-  methods: {
-    login() {
-      this.isAuthorized = true;
-    }
-  },
-};
+    methods: {
+      login() {
+        this.isAuthorized = true;
+      },
+
+      resetError() {
+        this.error = '';
+      },
+    },
+  };
 </script>

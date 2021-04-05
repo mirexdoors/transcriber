@@ -38,11 +38,13 @@
 				<v-chip
 					v-if="file"
 					close
-					class="mb-8"
+					class="mb-8 "
 					@click:close="removeFile()"
 				>
-					{{ file.name }}
-					({{ fileSize }})
+					<span class="text-truncate">
+						{{ file.name }}
+						({{ fileSize }})
+					</span>
 				</v-chip>
 
 				<v-btn
@@ -75,7 +77,7 @@
 </template>
 
 <script>
-  const VIDEO_TYPES = ['video/mp4', 'video/mpeg', 'video/quicktime'];
+  const VIDEO_TYPES = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/avi'];
 
   const toWav = require('audiobuffer-to-wav');
 
@@ -150,14 +152,14 @@
       },
 
       submit() {
-        //TODO проверка на видео
-
         if (VIDEO_TYPES.includes(this.file.type)) {
           this.isPreload = true;
           this.getAudioBuffer(this.file);
 
         } else if (this.file.type === 'audio/wav') {
           this.sendFile(this.file);
+        } else {
+          this.$emit('error', 'Rendering failed: unsupported file type');
         }
       },
 
@@ -171,34 +173,42 @@
         const reader = new FileReader();
         let myBuffer;
 
-
         const sampleRate = 16000;
         const numberOfChannels = 1;
 
         reader.onload = () => {
           const videoFileAsBuffer = reader.result; // arraybuffer
-          audioContext.decodeAudioData(videoFileAsBuffer).then((decodedAudioData) => {
+          audioContext.decodeAudioData(videoFileAsBuffer).then(decodedAudioData => {
 
             const duration = decodedAudioData.duration;
 
-            const offlineAudioContext = new OfflineAudioContext(numberOfChannels, sampleRate * duration, sampleRate);
-            const soundSource = offlineAudioContext.createBufferSource();
-
-            myBuffer = decodedAudioData;
-            soundSource.buffer = myBuffer;
-            soundSource.connect(offlineAudioContext.destination);
-            soundSource.start();
-
-            offlineAudioContext.startRendering().then((renderedBuffer) => {
+            if (duration > 300) {
+              this.$emit('error', 'Audio length must be less than 5 minutes');
               this.isPreload = false;
-              const wav = toWav(renderedBuffer);
-              const wavFile = new File([wav], `${file.name}.wav`, {type: "audio/wav"} );
-              const objectUrl = URL.createObjectURL(wavFile);
-              console.log(wavFile)
-              window.open(objectUrl);
-            }).catch(function (err) {
-              console.log('Rendering failed: ' + err);
-            });
+            } else {
+              const offlineAudioContext = new OfflineAudioContext(numberOfChannels, sampleRate * duration, sampleRate);
+              const soundSource = offlineAudioContext.createBufferSource();
+
+              myBuffer = decodedAudioData;
+              soundSource.buffer = myBuffer;
+              soundSource.connect(offlineAudioContext.destination);
+              soundSource.start();
+
+              offlineAudioContext.startRendering().then(renderedBuffer => {
+                this.isPreload = false;
+                const wav = toWav(renderedBuffer);
+                const wavFile = new File([wav], `${file.name}.wav`, {type: "audio/wav"});
+                const objectUrl = URL.createObjectURL(wavFile);
+
+                window.open(objectUrl);
+              }).catch((err) => {
+                this.$emit('error', 'Rendering failed: ' + err);
+                this.isPreload = false;
+              });
+            }
+          }).catch(e => {
+            this.$emit('error', e.message);
+            this.isPreload = false;
           });
         };
 
