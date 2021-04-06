@@ -9,16 +9,17 @@
 			class="textarea"
 		/>
 
-		<div class="caption">Download output as file:</div>
-		<v-chip-group>
-			<v-chip
-				v-for="extension in extensions"
-				:key="extension"
-			>
-				{{ extension }}
-			</v-chip>
-		</v-chip-group>
-
+		<div v-if="false">
+			<div class="caption">Download output as file:</div>
+			<v-chip-group>
+				<v-chip
+					v-for="extension in extensions"
+					:key="extension"
+				>
+					{{ extension }}
+				</v-chip>
+			</v-chip-group>
+		</div>
 	</v-card>
 </template>
 

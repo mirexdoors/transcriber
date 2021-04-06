@@ -72,6 +72,20 @@
 			</v-progress-circular>
 		</div>
 
+		<v-card min-height="300"
+				class="d-flex flex-column align-center justify-center pa-4 my-2">
+			<div class="caption mb-4">
+				Also you can record your audio
+			</div>
+
+			<div>
+				<VueRecordAudio
+					mode="press"
+					@result="onAfterRecord"
+				/>
+			</div>
+
+		</v-card>
 
 	</div>
 </template>
@@ -80,6 +94,8 @@
   const VIDEO_TYPES = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/avi'];
 
   const toWav = require('audiobuffer-to-wav');
+
+  // Vue.use(AudioRecorder);
 
   export default {
     name: 'TFileInput',
@@ -140,6 +156,10 @@
             || ('ondragstart' in div && 'ondrop' in div))
             && 'FormData' in window
             && 'FileReader' in window;
+      },
+
+      onAfterRecord(data) {
+        this.file =  new File([data], `record.wav`, {type: "audio/wav"});
       },
 
       triggerFileInput() {
