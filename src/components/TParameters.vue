@@ -1,103 +1,102 @@
 <template>
 	<div>
-
-		<div class="caption mb-2">Parameters:</div>
-
 		<v-select
-			:items="[15,30,60, 120]"
-			:value="15"
-			label="Timing (sec)"
+			v-for="select in selectParams"
+			:key="select.id"
+			v-model="select.init"
+			:items="select.values"
+			item-text="value"
+			item-value="value"
+			:label="select.label"
+			:disabled="select.isDisabled"
+			item-disabled="isDisabled"
 			outlined
+			dense
 		/>
 
+		<v-divider/>
+
+		<div
+			v-for="checkboxGroup in checkboxParams"
+			:key="checkboxGroup.id"
+		>
+			<span class="caption">{{ checkboxGroup.label }}</span>
+			<v-checkbox
+				v-for="item in checkboxGroup.values"
+				multiple
+				:key="item.value"
+				:value="item.value"
+				:label="item.value"
+			/>
+			<v-divider/>
+		</div>
+
 		<v-switch
+			v-for="switchItem in switchParams"
+			:key="switchItem.id"
+			dense
 			color="green darken-4"
 			inset
-			v-model="switchValue"
-			label="Включить расстановку пунктуации"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			v-model="switchValue1"
-			label="Разделение по спикерам"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			label="Включить расстановку тэгов"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			label="Определить эмоции"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			disabled
-			label="Выделить ключевые места"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			disabled
-			label="Убрать ненормативную лексику"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			disabled
-			label="Убрать слова-паразиты"
-		/>
+			v-model="switchItem.init"
+			class="caption"
+		>
+			<template v-slot:label>
+				<span class="caption">{{ switchItem.label }}</span>
+			</template>
+		</v-switch>
+
 
 		<div class="caption MB-2">Text domains</div>
+
 		<v-switch
-			color="green darken-4"
-			inset
-			v-model="switchValue2"
-			disabled
-			label="Пользовательский"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			disabled
-			label="Телекомуникационный"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
-			disabled
-			label="Военный"
-		/>
-		<v-switch
-			color="green darken-4"
-			inset
+			v-for="switchItem in textDomains"
+			:key="switchItem.id"
 			dense
-			disabled
-			label="Юридический"
-		/>
-		<v-switch
+			:readonly="switchItem.isReadonly"
+			:disabled="switchItem.isDisabled"
 			color="green darken-4"
 			inset
-			dense
-			disabled
-			label="Нефтегаовый"
-		/>
+			v-model="switchItem.init"
+			class="caption"
+		>
+			<template v-slot:label>
+				<span class="caption">{{ switchItem.label }}</span>
+			</template>
+		</v-switch>
 	</div>
 </template>
 
 <script>
+  import {OPTION_TYPES} from "../parameters";
+
   export default {
     name: "TParameters",
-    data() {
-      return {
-        switchValue: true,
-        switchValue1: true,
-        switchValue2: true,
+
+    props: {
+      options: {
+        type: Array,
+        default: () => [],
       }
-    }
+    },
+
+    computed: {
+      selectParams() {
+        return this.options.filter(option => option.type === OPTION_TYPES.SELECT);
+      },
+
+      switchParams() {
+        return this.options.filter(option => option.type === OPTION_TYPES.SWITCH && option.group !== 'domains');
+      },
+
+      checkboxParams() {
+        return this.options.filter(option => option.type === OPTION_TYPES.CHECKBOX);
+      },
+
+      textDomains() {
+        return this.options.filter(option => option.type === OPTION_TYPES.SWITCH && option.group === 'domains');
+      }
+    },
+
   }
 </script>
 

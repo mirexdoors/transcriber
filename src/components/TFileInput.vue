@@ -91,11 +91,9 @@
 </template>
 
 <script>
-  const VIDEO_TYPES = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/avi'];
+  const VIDEO_TYPES = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/avi', 'audio/wav'];
 
   const toWav = require('audiobuffer-to-wav');
-
-  // Vue.use(AudioRecorder);
 
   export default {
     name: 'TFileInput',
@@ -159,7 +157,7 @@
       },
 
       onAfterRecord(data) {
-        this.file =  new File([data], `record.wav`, {type: "audio/wav"});
+        this.file = new File([data], `record.wav`, {type: "audio/wav"});
       },
 
       triggerFileInput() {
@@ -175,25 +173,22 @@
         if (VIDEO_TYPES.includes(this.file.type)) {
           this.isPreload = true;
           this.getAudioBuffer(this.file);
-
-        } else if (this.file.type === 'audio/wav') {
-          this.sendFile(this.file);
         } else {
           this.$emit('error', 'Rendering failed: unsupported file type');
         }
       },
 
       sendFile(file) {
-        console.log(file)
-        return 1;
+        this.$emit('submit', file);
       },
+
 
       getAudioBuffer(file) {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const reader = new FileReader();
         let myBuffer;
 
-        const sampleRate = 16000;
+        const sampleRate = 44000;
         const numberOfChannels = 1;
 
         reader.onload = () => {
@@ -218,9 +213,7 @@
                 this.isPreload = false;
                 const wav = toWav(renderedBuffer);
                 const wavFile = new File([wav], `${file.name}.wav`, {type: "audio/wav"});
-                const objectUrl = URL.createObjectURL(wavFile);
-
-                window.open(objectUrl);
+                this.sendFile(wavFile);
               }).catch((err) => {
                 this.$emit('error', 'Rendering failed: ' + err);
                 this.isPreload = false;

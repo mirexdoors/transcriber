@@ -5,7 +5,7 @@
 			name="text"
 			filled
 			readonly
-			:value="output"
+			:value="text"
 			class="textarea"
 		/>
 
@@ -27,9 +27,14 @@
   export default {
     name: "TOutput",
 
+    props: {
+      text: {
+        type: String,
+        default: '',
+      }
+    },
     data() {
       return {
-        output: "",
         extensions: [
           '.DOCX',
           '.PDF',
