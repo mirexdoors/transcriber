@@ -336,7 +336,9 @@ export default {
 
         try {
           const responseFetch = await fetch(CONVERT_ROUTE, {
-            method: 'POST', headers: {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
               'Token': TOKEN,
             },
             body: formData

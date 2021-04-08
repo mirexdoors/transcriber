@@ -1,4 +1,4 @@
-export const SERVER = 'http://84.201.176.202';
+export const SERVER = 'https://cors-anywhere.herokuapp.com/http://84.201.176.202';
 export const API = SERVER + ':7005/api/v1';
 
 export const  LOG_ROUTE = API + '/converterLog';
