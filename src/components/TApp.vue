@@ -40,17 +40,6 @@
           />
         </v-col>
       </v-row>
-
-      <v-row>
-        <v-col
-            cols="12"
-            class="secondary"
-        >
-
-          <t-archive :items="archiveItems"/>
-
-        </v-col>
-      </v-row>
     </v-container>
   </div>
 
@@ -58,19 +47,18 @@
 
 <script>
 import TFileInput from "@/components/TFileInput";
-import TArchive from "@/components/TArchive";
+
 import TParameters from "./TParameters";
 import TOutput from "./TOutput";
 import TPreloader from "@/components/TPreloader";
 
-import {LOG_ROUTE, CONVERT_ROUTE, TOKEN, OPTION_TYPES} from "../parameters";
+import {CONVERT_ROUTE, TOKEN, OPTION_TYPES} from "../parameters";
 
 export default {
   name: "TApp",
   components: {
     TOutput,
     TFileInput,
-    TArchive,
     TParameters,
     TPreloader,
   },
@@ -359,28 +347,6 @@ export default {
           console.error(e);
           this.isPreloader = false;
         }
-      }
-    },
-
-    async fetchArchive(userId) {
-      const route = new URL(LOG_ROUTE);
-      const params = {
-        CurrentPage: 1,
-        PerPage: 1000,
-        UserId: userId,
-      };
-
-      Object.keys(params).forEach(key => route.searchParams.append(key, params[key]));
-      try {
-        const responseJson = await fetch(route.toString(), {
-          headers: {
-            'Token': TOKEN,
-          }
-        });
-        const response = await responseJson.json();
-        this.archiveItems = response.List;
-      } catch (e) {
-        console.error(e)
       }
     },
   }

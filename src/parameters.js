@@ -1,5 +1,5 @@
-export const SERVER = 'http://84.201.176.202';
-export const API = SERVER + ':7005/api/v1';
+export const SERVER = 'https://www.roza.ai';
+export const API = SERVER + '/api/v1';
 
 export const  LOG_ROUTE = API + '/converterLog';
 export const  CONVERT_ROUTE = API + '/convertFile';
