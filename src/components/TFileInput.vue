@@ -163,10 +163,12 @@ export default {
     },
 
     submit() {
+      console.log(this.file.type)
       if (VIDEO_TYPES.includes(this.file.type)) {
         this.emitPreloader(true);
         this.getAudioBuffer(this.file);
-      } else if (this.file.type === 'audio/mp3') {
+      } else if (this.file.type === 'audio/mpeg') {
+        this.emitPreloader(true);
         this.sendFile(this.file);
       }else {
         this.$emit('error', 'Rendering failed: unsupported file type');

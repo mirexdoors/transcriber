@@ -337,13 +337,12 @@ export default {
         try {
           const responseFetch = await fetch(CONVERT_ROUTE, {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
               'Token': TOKEN,
             },
             body: formData
           });
-          console.log(responseFetch)
+
           if (responseFetch.ok) {
             const response = await responseFetch.json();
             if (response?.Model) {
