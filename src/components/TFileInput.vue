@@ -166,7 +166,9 @@ export default {
       if (VIDEO_TYPES.includes(this.file.type)) {
         this.emitPreloader(true);
         this.getAudioBuffer(this.file);
-      } else {
+      } else if (this.file.type === 'audio/mp3') {
+        this.sendFile(this.file);
+      }else {
         this.$emit('error', 'Rendering failed: unsupported file type');
       }
     },
