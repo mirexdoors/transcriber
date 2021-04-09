@@ -325,20 +325,21 @@ export default {
             body: formData
           });
 
-          if (responseFetch.ok) {
-            const response = await responseFetch.json();
-            if (response?.Model) {
-              this.isPreloader = false;
-              this.outputAsText = response.Model?.ResultText;
-              await this.fetchArchive(this.userId);
+          const response = await responseFetch.json();
+          this.isPreloader = false;
+          //error case
+          if (!responseFetch.ok) {
+
+            if (response.Error) {
+              this.$emit('update:error', response.Errors[0].ErrorDebug);
             }
           } else {
-            this.isPreloader = false;
-            this.$emit('update:error', responseFetch.statusText);
+            if (response?.Model) {
+              this.outputAsText = response.Model?.ResultText;
+            }
           }
-
         } catch (e) {
-          console.error(e);
+          console.error(11, e);
           this.isPreloader = false;
         }
       }
