@@ -163,7 +163,6 @@ export default {
     },
 
     submit() {
-      console.log(this.file.type)
       if (VIDEO_TYPES.includes(this.file.type)) {
         this.emitPreloader(true);
         this.getAudioBuffer(this.file);

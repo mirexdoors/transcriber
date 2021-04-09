@@ -296,12 +296,6 @@ export default {
     },
   },
 
-  mounted() {
-    if (this.userId) {
-      this.fetchArchive(this.userId);
-    }
-  },
-
   methods: {
     showError($event) {
       this.$emit('update:error', $event);
