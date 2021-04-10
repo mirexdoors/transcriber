@@ -1,135 +1,231 @@
 <template>
-	<div class="pb-8">
-		<v-card-title>
-			Archive
-			<v-spacer></v-spacer>
-			<v-text-field
-				v-model="search"
-				append-icon="mdi-magnify"
-				label="Search"
-				single-line
-				hide-details
-			></v-text-field>
-		</v-card-title>
+  <div class="pb-8">
+    <v-card-title>
+      Archive
+      <v-spacer></v-spacer>
+      <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+      ></v-text-field>
+    </v-card-title>
 
-		<v-data-table
-			:headers="headers"
-			:items="items"
-			:search="search"
-			:sort-by.sync="sortBy"
-			:sort-desc.sync="sortDesc"
-			:items-per-page=-1
-			hide-default-footer
-			class="elevation-1"
-		>
-			<template v-slot:item.FilePath="{ item }">
-				<a
-					:href="host + item.FilePath"
-					target="_blank"
-				>
-					{{ host + item.FilePath }}
-				</a>
-			</template>
+    <v-data-table
+        :headers="headers"
+        :items="items"
+        :search="search"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
+        :items-per-page=-1
+        hide-default-footer
+        class="elevation-1"
+    >
+      <template v-slot:item.FilePath="{ item }">
+        <a
+            :href="host + item.FilePath"
+            target="_blank"
+        >
+          {{ host + item.FilePath }}
+        </a>
+      </template>
 
-			<template v-slot:item.actions="{ item }">
-				<a
-					:href="host + item.FilePath"
-					target="_blank"
-					:download="host + item.FilePath"
-				>
-					<v-icon
-						small
-						class="mr-2"
-					>
-						mdi-download
-					</v-icon>
-				</a>
-				<v-icon
-					small
-					class="pr-1"
-				>
-					mdi-refresh
-				</v-icon>
-				<v-icon
-					small
-				>
-					mdi-delete
-				</v-icon>
-			</template>
-		</v-data-table>
-	</div>
+      <template v-slot:item.actions="{ item }">
+        <a
+            :href="host + item.FilePath"
+            target="_blank"
+            :download="host + item.FilePath"
+        >
+          <v-icon
+              small
+              class="mr-2"
+          >
+            mdi-download
+          </v-icon>
+        </a>
+        <v-icon
+            small
+            class="pr-1"
+            @click="reloadFile(host + item.FilePath)"
+        >
+          mdi-refresh
+        </v-icon>
+        <v-icon
+            small
+            @click="deleteFile(item.Id)"
+        >
+          mdi-delete
+        </v-icon>
+      </template>
+
+      <template v-slot:item.Tags="{ item }">
+
+        <div v-for="cat in item.Tags" :key="cat">
+          <span
+              v-if="cat.name"
+              class="font-weight-bold">
+            {{ cat.name }}:
+          </span>
+          <span v-if="cat.values">{{ cat.values }}</span>
+        </div>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
-  import {LOG_ROUTE, TOKEN, SERVER} from "../parameters";
+import {LOG_ROUTE, TOKEN, SERVER} from "@/parameters";
 
-  export default {
-    name: "TArchive",
+export default {
+  name: "TArchive",
 
-    data() {
-      return {
-        sortBy: 'Id',
-        sortDesc: true,
-        search: '',
-        headers: [
-          {
-            text: '#',
-            align: 'start',
-            value: 'Id',
-          },
-          {
-            text: 'Date',
-            align: 'start',
-            sortable: false,
-            value: 'date',
-          },
-          {text: 'Filename', value: 'filename'},
-          {text: 'Size (KB)', value: 'size'},
-          {text: 'Tags', value: 'tags'},
-          {text: 'Link', value: 'FilePath'},
-          {text: 'Actions', value: 'actions', sortable: false},
-        ],
-        items: [],
+  data() {
+    return {
+      sortBy: 'Id',
+      sortDesc: true,
+      search: '',
+      headers: [
+        {
+          text: '#',
+          align: 'start',
+          value: 'Id',
+        },
+        {
+          text: 'Date',
+          align: 'start',
+          sortable: false,
+          value: 'CreatedAt',
+        },
+        // {text: 'Filename', value: 'filename'},
+        // {text: 'Size (KB)', value: 'size'},
+        {text: 'Tags', value: 'Tags'},
+        {text: 'Link', value: 'FilePath'},
+        {text: 'Actions', value: 'actions', sortable: false},
+      ],
+      items: [],
+    }
+  },
+
+  computed: {
+    host() {
+      return SERVER;
+    },
+
+    userId() {
+      return Number(sessionStorage.getItem('user_id'));
+    },
+  },
+
+  mounted() {
+    this.fetchArchive(this.userId);
+  },
+
+  methods: {
+    formattedDate: (d = new Date) => {
+      let month = String(d.getMonth() + 1);
+      let day = String(d.getDate());
+      const year = String(d.getFullYear());
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return `${day}.${month}.${year}`;
+    },
+
+    getTags(ner) {
+      const result = {
+        ORG: '',
+        LOCATIONS: '',
+        PERSONS: ''
+      };
+      const text = ner[0].sent;
+      const namedEntities = ner[0].named_entities;
+
+      for (let category in namedEntities) {
+
+        if (namedEntities[category].length > 0) {
+          switch (category) {
+            case 'ORG':
+              result.ORG = {name: 'ORG', values: this.getWordsFromText(namedEntities[category], text).join(',')};
+              break;
+            case 'LOCATION':
+              result.LOCATIONS = {
+                name: 'LOCATIONS',
+                values: this.getWordsFromText(namedEntities[category], text).join(',')
+              };
+              break;
+            case 'PER':
+              result.PERSONS = {
+                name: 'PERSONS',
+                values: this.getWordsFromText(namedEntities[category], text).join(',')
+              };
+              break;
+          }
+        }
+      }
+
+      return result;
+    },
+
+    getWordsFromText(ranges, text) {
+      const result = [];
+
+      ranges.forEach(range => {
+        result.push(text.substr(range[0], range[1] - range[0]));
+      });
+
+      return result;
+    },
+    async fetchArchive(userId) {
+      const route = new URL(LOG_ROUTE);
+      const params = {
+        CurrentPage: 1,
+        PerPage: 1000,
+        UserId: userId,
+      };
+
+      Object.keys(params).forEach(key => route.searchParams.append(key, params[key]));
+
+      try {
+        const responseJson = await fetch(route.toString(), {
+          headers: {
+            'Token': TOKEN,
+          }
+        });
+        const response = await responseJson.json();
+        this.items = response.List.map(item => {
+          item.CreatedAt = this.formattedDate(new Date(item.CreatedAt));
+          item.Tags = this.getTags(JSON.parse(item.RawResult).result.ner);
+          return item;
+        });
+      } catch (e) {
+        console.error(e)
       }
     },
 
-    computed: {
-      host() {
-        return SERVER;
-      },
-
-      userId() {
-        return Number(sessionStorage.getItem('user_id'));
-      },
+    reloadFile(fileUrl) {
+      this.$router.push({name: 'Home', query: {fileUrl: fileUrl}});
     },
 
-    mounted() {
-      this.fetchArchive(this.userId);
-    },
-
-    methods: {
-      async fetchArchive(userId) {
-        const route = new URL(LOG_ROUTE);
-        const params = {
-          CurrentPage: 1,
-          PerPage: 1000,
-          UserId: userId,
-        };
-
-        Object.keys(params).forEach(key => route.searchParams.append(key, params[key]));
-        try {
-          const responseJson = await fetch(route.toString(), {
-            headers: {
-              'Token': TOKEN,
+    deleteFile(id) {
+      const route = new URL(LOG_ROUTE);
+      try {
+        fetch(route.toString() + '/' + id, {
+              method: 'DELETE',
+              headers: {
+                'Token': TOKEN,
+              },
             }
-          });
-          const response = await responseJson.json();
-          this.items = response.List;
-        } catch (e) {
-          console.error(e)
-        }
-      },
+        ).then(() => {
+          this.items = [];
+          this.fetchArchive(this.userId);
+        });
+        // eslint-disable-next-line no-empty
+      } catch (e) {
+      }
     }
   }
+}
 </script>
 

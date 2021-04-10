@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <t-preloader v-if="isPreloader"/>
     <v-app-bar
         app
         light
@@ -15,11 +16,11 @@
         </router-link>
 
         <div class="d-flex align-center">
-          <router-link to="/" class="px-4 font-weight-bold display-1">Transcriber</router-link>
+          <router-link to="/" class="px-4 font-weight-bold">Transcriber</router-link>
 
-          <router-link to="/about" class="px-4 font-weight-bold display-1">About</router-link>
+          <router-link to="/about" class="px-4 font-weight-bold">About</router-link>
 
-          <router-link to="/archive" class="px-4 font-weight-bold display-1">Archive</router-link>
+          <router-link to="/archive" class="px-4 font-weight-bold">Archive</router-link>
         </div>
 
         <v-btn
@@ -39,7 +40,7 @@
           @login="login"
           @update:error="error = $event"
       />
-      <router-view v-else/>
+      <router-view v-else  @preloader="togglePreloader($event)"/>
     </v-main>
 
     <t-error
@@ -53,6 +54,7 @@
 <script>
 import TLogin from "@/components/TLogin";
 import TError from "./components/TError";
+import TPreloader from "@/components/TPreloader";
 
 export default {
   name: 'App',
@@ -60,15 +62,18 @@ export default {
   components: {
     TError,
     TLogin,
+    TPreloader,
   },
 
   data: () => ({
     isAuthorized: false,
     error: '',
+    isPreloader: false,
   }),
 
   mounted() {
     this.isAuthorized = sessionStorage.getItem('user_id');
+
   },
 
   methods: {
@@ -84,6 +89,10 @@ export default {
     resetError() {
       this.error = '';
     },
+
+    togglePreloader($event) {
+      this.isPreloader = $event;
+    }
   },
 };
 </script>

@@ -1,9 +1,9 @@
 <template>
   <div id="file-drag-drop">
     <form
-        v-show="!file"
+        v-if="files.length === 0"
         ref="fileForm"
-        :style="!file ? 'height: 250px;' : ''"
+        :style="files.length === 0 ? 'height: 200px;' : ''"
         :class="isDragover ? 'hover secondary' : ''"
         class="form bordered flex-column align-center justify-center"
     >
@@ -19,15 +19,16 @@
 
       <v-file-input
           ref="fileInput"
-          v-model="file"
+          multiple
+          v-model="files"
           class="d-none"
       >
       </v-file-input>
     </form>
 
     <div
-        v-show="file"
-        :style="file ? 'height: 250px;' : ''"
+        v-show="files.length > 0"
+        :style="files.length > 0 ? 'height: 200px;' : ''"
         class="form d-flex  align-center justify-center"
 
     >
@@ -36,34 +37,22 @@
           style="width: 100%;"
       >
         <v-chip
-            v-if="file"
+            v-for="file in files"
+            :key="file.name"
             close
             class="mb-8 "
-            @click:close="removeFile()"
+            @click:close="removeFile(file)"
         >
 					<span class="text-truncate">
 						{{ file.name }}
-						({{ fileSize }})
+						({{ getFileSize(file) }})
 					</span>
         </v-chip>
 
-        <v-btn
-            v-if="file"
-            class="submit-button primary"
-            @click="submit()"
-        >
-          Submit
-          <v-icon
-              right
-              dark
-          >
-            mdi-cloud-upload
-          </v-icon>
-        </v-btn>
       </div>
     </div>
 
-    <v-card min-height="250"
+    <v-card min-height="200"
             class="d-flex flex-column align-center justify-center pa-4 my-2">
       <div class="caption mb-4">
         Also you can record your audio
@@ -79,19 +68,40 @@
     </v-card>
 
     <v-card
-        min-height="250"
+        min-height="200"
         class="d-flex flex-column justify-center align-center justify-center pa-4"
     >
       <div>
         <div class="caption mb-4">You can download file from remote resourse (only .wav or .mp3):</div>
+        <div class="caption mb-4">It's disabled when file upload checked</div>
 
         <v-text-field
             v-model="fileLink"
             outlined
             dense
+            :disabled="files.length > 0"
             label="File link"
         />
       </div>
+    </v-card>
+
+    <v-card
+        min-height="100"
+        class="d-flex flex-column justify-center align-center justify-center pa-4"
+    >
+      <v-btn
+          :disabled="!files.length && !fileLink"
+          class="submit-button primary"
+          @click="submit()"
+      >
+        Submit
+        <v-icon
+            right
+            dark
+        >
+          mdi-cloud-upload
+        </v-icon>
+      </v-btn>
     </v-card>
   </div>
 </template>
@@ -106,23 +116,16 @@ export default {
 
   data: () => ({
     dragAndDropCapable: false,
-    file: null,
+    files: [],
     fileLink: '',
     duration: 0,
     isLoading: false,
     isDragover: false,
   }),
 
-  computed: {
-    fileSize() {
-      if (this.file) {
-        return `${(this.file.size / 1048576).toFixed(2)} MB`
-      }
-      return null;
-    }
-  },
-
   mounted() {
+    this.fileLink = this.$route.query.fileUrl ? this.$route.query.fileUrl : '';
+
     this.dragAndDropCapable = this.determineDragAndDropCapable();
 
     if (this.dragAndDropCapable) {
@@ -154,6 +157,13 @@ export default {
   },
 
   methods: {
+    getFileSize(file) {
+      if (file) {
+        return `${(file.size / 1048576).toFixed(2)} MB`
+      }
+      return null;
+    },
+
     emitPreloader(bool) {
       this.$emit('preloader', bool);
     },
@@ -167,36 +177,53 @@ export default {
     },
 
     onAfterRecord(data) {
-      this.file = new File([data], `record.wav`, {type: "audio/wav"});
+      this.files = [];
+      this.files.push(new File([data], `record.wav`, {type: "audio/wav"}));
     },
 
     triggerFileInput() {
       this.$refs.fileInput.$refs.input.click();
     },
 
-    removeFile() {
-      this.file = null;
-      this.isDragover = false;
+    removeFile(deletedFile) {
+      this.files = this.files.filter(file => file.name !== deletedFile.name);
+
+      if (this.files.length === 0)
+        this.isDragover = false;
     },
 
-    submit() {
-      if (VIDEO_TYPES.includes(this.file.type)) {
-        this.emitPreloader(true);
-        this.getAudioBuffer(this.file);
-      } else if (this.file.type === 'audio/mpeg') {
-        this.emitPreloader(true);
-        this.sendFile(this.file);
-      } else {
-        this.$emit('error', 'Rendering failed: unsupported file type');
+    async submit() {
+      if (this.files.length > 0) {
+        const rightFiles = this.files.filter(file => {
+          return VIDEO_TYPES.includes(file.type) || file.type === 'audio/mpeg';
+        });
+
+        if (rightFiles.length > 0) {
+          this.emitPreloader(true);
+
+          for (let file of rightFiles) {
+            if (VIDEO_TYPES.includes(file.type)) {
+              file = await this.getAudioBuffer(file);
+            }
+          }
+
+
+          this.sendFiles({files: rightFiles, fileUrl: ''});
+        } else {
+          this.$emit('error', 'Rendering failed: unsupported file type');
+        }
+      } else if (this.fileLink) {
+        this.sendFiles({files: [], fileUrl: this.fileLink});
       }
+
     },
 
-    sendFile(file) {
-      this.$emit('submit', file);
+    sendFiles(files) {
+      this.$emit('submit', files);
     },
 
 
-    getAudioBuffer(file) {
+    async getAudioBuffer(file) {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const reader = new FileReader();
       let myBuffer;
@@ -222,10 +249,10 @@ export default {
             soundSource.connect(offlineAudioContext.destination);
             soundSource.start();
 
-            offlineAudioContext.startRendering().then(renderedBuffer => {
+            return offlineAudioContext.startRendering().then(renderedBuffer => {
               const wav = toWav(renderedBuffer);
               const wavFile = new File([wav], `${file.name}.wav`, {type: "audio/wav"});
-              this.sendFile(wavFile);
+              return wavFile;
             }).catch((err) => {
               this.$emit('error', 'Rendering failed: ' + err);
               this.emitPreloader(false);
@@ -237,7 +264,7 @@ export default {
         });
       };
 
-      reader.readAsArrayBuffer(file); // video file
+      await reader.readAsArrayBuffer(file); // video file
     }
   }
 }

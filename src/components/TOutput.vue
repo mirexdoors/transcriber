@@ -9,14 +9,16 @@
 			class="textarea"
 		/>
 
-		<div v-if="false">
-			<div class="caption">Download output as file:</div>
+		<div style="min-height: 100px;">
+			<div class="caption">Download output</div>
 			<v-chip-group>
 				<v-chip
-					v-for="extension in extensions"
-					:key="extension"
+					v-for="file in files"
+					:key="file.url"
+          target="_blank"
+          :href="file.url"
 				>
-					{{ extension }}
+         {{ file.ext }}
 				</v-chip>
 			</v-chip-group>
 		</div>
@@ -31,17 +33,11 @@
       text: {
         type: String,
         default: '',
-      }
-    },
-    data() {
-      return {
-        extensions: [
-          '.DOCX',
-          '.PDF',
-          '.TXT',
-          '.HTML',
-        ],
-      }
+      },
+      files: {
+        type: Array,
+        default: () => [],
+      },
     },
   }
 </script>
@@ -49,6 +45,6 @@
 
 <style>
 	.textarea textarea {
-		min-height: 730px !important;
+		min-height: 580px !important;
 	}
 </style>

@@ -1,11 +1,9 @@
 <template>
   <div>
-    <t-preloader v-if="isPreloader"/>
     <v-row>
       <v-col cols="3">
         <v-navigation-drawer
             width="100%"
-            :value="!isPreloader"
         >
           <t-parameters
               :options="options"
@@ -22,7 +20,7 @@
           <t-file-input
               class="mb-8"
               @error="showError($event)"
-              @submit="sendFile($event)"
+              @submit="sendFiles($event)"
               @preloader="togglePreloader($event)"
           />
         </v-card>
@@ -34,6 +32,7 @@
       >
         <t-output
             :text="outputAsText"
+            :files="outputFiles"
         />
       </v-col>
     </v-row>
@@ -46,9 +45,8 @@ import TFileInput from "@/components/TFileInput";
 
 import TParameters from "./TParameters";
 import TOutput from "./TOutput";
-import TPreloader from "@/components/TPreloader";
 
-import {CONVERT_ROUTE, TOKEN, OPTION_TYPES} from "../parameters";
+import {CONVERT_ROUTE, TOKEN, OPTION_TYPES, SERVER} from "@/parameters";
 
 export default {
   name: "TApp",
@@ -56,16 +54,15 @@ export default {
     TOutput,
     TFileInput,
     TParameters,
-    TPreloader,
   },
 
   data() {
     return {
-      isPreloader: false,
       archiveItems: [],
       options: [
         {
           id: 1,
+          name: 'timing',
           group: '',
           init: 15,
           values: [
@@ -283,6 +280,7 @@ export default {
         },
       ],
       outputAsText: '',
+      outputFiles: [],
     }
   },
 
@@ -298,21 +296,70 @@ export default {
     },
 
     togglePreloader($event) {
-      this.isPreloader = $event;
+      this.$emit('preloader', $event);
     },
 
-    async sendFile(file) {
-      if (file) {
-        const formData = new FormData();
-        formData.append('data', file);
-        formData.append('TimeFrame', '15');
-        formData.append('IsShowEmotion', 'true');
-        formData.append('IsShowSpeaker', 'true');
-        formData.append('IsShowTag', 'false');
-        formData.append('IsDebug', '1');
-        formData.append('UserId', this.userId.toString());
+    async sendFiles($event) {
 
-        try {
+      this.outputAsText = '';
+      this.outputFiles = [];
+      if ($event.files.length > 0 || $event.fileUrl) {
+
+        if (!$event.fileUrl) {
+          for (const file of $event.files) {
+            const formData = new FormData();
+
+            formData.append('data', file);
+
+
+            formData.append('TimeFrame', '15');
+            formData.append('IsShowEmotion', 'true');
+            formData.append('IsShowSpeaker', 'true');
+            formData.append('IsShowTag', 'false');
+            formData.append('IsDebug', '1');
+            formData.append('UserId', this.userId.toString());
+
+            try {
+              const responseFetch = await fetch(CONVERT_ROUTE, {
+                method: 'POST',
+                headers: {
+                  'Token': TOKEN,
+                },
+                body: formData
+              });
+
+              const response = await responseFetch.json();
+
+              //error case
+              if (!responseFetch.ok) {
+
+                if (response.Error) {
+                  this.$emit('update:error', response.Errors[0].ErrorDebug);
+                }
+              } else {
+                if (response?.Model) {
+                  this.outputAsText += response.Model?.ResultText;
+                  this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath});
+                  this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
+
+                }
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          }
+          this.$emit('preloader', false);
+        } else {
+          const formData = new FormData();
+
+          formData.append('DataUrl', $event.fileUrl);
+          formData.append('TimeFrame', '15');
+          formData.append('IsShowEmotion', 'true');
+          formData.append('IsShowSpeaker', 'true');
+          formData.append('IsShowTag', 'false');
+          formData.append('IsDebug', '1');
+          formData.append('UserId', this.userId.toString());
+
           const responseFetch = await fetch(CONVERT_ROUTE, {
             method: 'POST',
             headers: {
@@ -322,7 +369,7 @@ export default {
           });
 
           const response = await responseFetch.json();
-          this.isPreloader = false;
+
           //error case
           if (!responseFetch.ok) {
 
@@ -331,12 +378,12 @@ export default {
             }
           } else {
             if (response?.Model) {
-              this.outputAsText = response.Model?.ResultText;
+              this.outputAsText += response.Model?.ResultText;
+              this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath});
+              this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
+
             }
           }
-        } catch (e) {
-          console.error(11, e);
-          this.isPreloader = false;
         }
       }
     },

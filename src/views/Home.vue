@@ -1,13 +1,14 @@
 <template>
   <div>
-    <t-app @update:error="error = $event" />
+
+    {{fileUrl}}
+    <t-app @update:error="error = $event" @preloader="$emit('preloader', $event)" />
     <t-error
         v-if="error"
         :error="error"
         @close="resetError"
     />
   </div>
-
 </template>
 
 <script>
@@ -19,6 +20,9 @@ export default {
   components: {
     TApp,
     TError,
+  },
+  props: {
+    fileUrl: String,
   },
   data: () => ({
     error: '',
