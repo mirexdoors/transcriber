@@ -12,6 +12,7 @@
 			item-disabled="isDisabled"
 			outlined
 			dense
+      class="pr-4"
 		/>
 
 		<v-divider/>
@@ -21,13 +22,20 @@
 			:key="checkboxGroup.id"
 		>
 			<span class="caption">{{ checkboxGroup.label }}</span>
-			<v-checkbox
-				v-for="item in checkboxGroup.values"
-				multiple
-				:key="item.value"
-				:value="item.value"
-				:label="item.value"
-			/>
+      <div class="d-flex  justify-space-between">
+        <v-checkbox
+            v-for="item in checkboxGroup.values"
+            multiple
+            dense
+            ripple
+            color="green darken-4"
+            :key="item.value"
+            :value="item.value"
+            :label="item.value"
+            class="pr-4"
+        />
+      </div>
+
 			<v-divider/>
 		</div>
 

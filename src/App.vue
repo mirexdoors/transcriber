@@ -1,83 +1,100 @@
 <template>
-	<v-app>
-		<v-app-bar
-			app
-			light
-			class="justify-center accent"
-		>
-			<v-container
-				class="d-flex align-center "
-			>
+  <v-app>
+    <v-app-bar
+        app
+        light
+        class="app-bar accent pl-2"
+    >
+      <div class="justify-space-between accent d-flex align-center app-bar__wrapper">
+        <router-link to="/">
+          <img
+              src="../assets/logo.png"
+              style="height: 80px;"
+              class="d-block pa-4"
+          />
+        </router-link>
 
-				<h1 class="title text-center d-flex justify-center text--primary">
-					<router-link to="/">TRANSCRIBER</router-link>
-				</h1>
-				<v-spacer></v-spacer>
-				<router-link to="/about">About</router-link>
-				<router-link to="/archive" class="ml-2">Archive</router-link>
-				<v-btn
-					v-if="isAuthorized"
-					icon
-					class="ml-2"
-					@click="logout()"
-				>
-					<v-icon>mdi-logout</v-icon>
-				</v-btn>
-			</v-container>
-		</v-app-bar>
-		<v-main>
-			<t-login
-				v-if="!isAuthorized"
-				@login="login"
-				@update:error="error = $event"
-			/>
-			<v-container v-else>
-				<router-view/>
-			</v-container>
-		</v-main>
+        <div class="d-flex align-center">
+          <router-link to="/" class="px-4 font-weight-bold display-1">Transcriber</router-link>
 
-		<t-error
-			v-if="error"
-			:error="error"
-			@close="resetError"
-		/>
-	</v-app>
+          <router-link to="/about" class="px-4 font-weight-bold display-1">About</router-link>
+
+          <router-link to="/archive" class="px-4 font-weight-bold display-1">Archive</router-link>
+        </div>
+
+        <v-btn
+            v-if="isAuthorized"
+            icon
+            class="ml-2"
+            @click="logout()"
+        >
+          <v-icon>mdi-logout</v-icon>
+        </v-btn>
+      </div>
+    </v-app-bar>
+
+    <v-main class="main">
+      <t-login
+          v-if="!isAuthorized"
+          @login="login"
+          @update:error="error = $event"
+      />
+      <router-view v-else/>
+    </v-main>
+
+    <t-error
+        v-if="error"
+        :error="error"
+        @close="resetError"
+    />
+  </v-app>
 </template>
 
 <script>
-  import TLogin from "@/components/TLogin";
-  import TError from "./components/TError";
+import TLogin from "@/components/TLogin";
+import TError from "./components/TError";
 
-  export default {
-    name: 'App',
+export default {
+  name: 'App',
 
-    components: {
-      TError,
-      TLogin,
+  components: {
+    TError,
+    TLogin,
+  },
+
+  data: () => ({
+    isAuthorized: false,
+    error: '',
+  }),
+
+  mounted() {
+    this.isAuthorized = sessionStorage.getItem('user_id');
+  },
+
+  methods: {
+    login() {
+      this.isAuthorized = true;
     },
 
-    data: () => ({
-      isAuthorized: false,
-      error: '',
-    }),
-
-    mounted() {
-      this.isAuthorized = sessionStorage.getItem('user_id');
+    logout() {
+      sessionStorage.setItem('user_id', '');
+      this.isAuthorized = false;
     },
 
-    methods: {
-      login() {
-        this.isAuthorized = true;
-      },
-
-      logout() {
-        sessionStorage.setItem('user_id', '');
-        this.isAuthorized = false;
-      },
-
-      resetError() {
-        this.error = '';
-      },
+    resetError() {
+      this.error = '';
     },
-  };
+  },
+};
 </script>
+
+<style>
+.main, .app-bar__wrapper {
+  width: 1600px;
+  margin: 0 auto;
+}
+
+.app-bar {
+  box-shadow: none !important;
+}
+</style>

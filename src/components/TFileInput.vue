@@ -3,7 +3,7 @@
     <form
         v-show="!file"
         ref="fileForm"
-        :style="!file ? 'height: 200px;' : ''"
+        :style="!file ? 'height: 250px;' : ''"
         :class="isDragover ? 'hover secondary' : ''"
         class="form bordered flex-column align-center justify-center"
     >
@@ -27,8 +27,9 @@
 
     <div
         v-show="file"
-        :style="file ? 'height: 200px;' : ''"
+        :style="file ? 'height: 250px;' : ''"
         class="form d-flex  align-center justify-center"
+
     >
       <div
           class="d-flex flex-column  align-center justify-center"
@@ -62,7 +63,7 @@
       </div>
     </div>
 
-    <v-card min-height="300"
+    <v-card min-height="250"
             class="d-flex flex-column align-center justify-center pa-4 my-2">
       <div class="caption mb-4">
         Also you can record your audio
@@ -77,6 +78,21 @@
 
     </v-card>
 
+    <v-card
+        min-height="250"
+        class="d-flex flex-column justify-center align-center justify-center pa-4"
+    >
+      <div>
+        <div class="caption mb-4">You can download file from remote resourse (only .wav or .mp3):</div>
+
+        <v-text-field
+            v-model="fileLink"
+            outlined
+            dense
+            label="File link"
+        />
+      </div>
+    </v-card>
   </div>
 </template>
 
@@ -91,6 +107,7 @@ export default {
   data: () => ({
     dragAndDropCapable: false,
     file: null,
+    fileLink: '',
     duration: 0,
     isLoading: false,
     isDragover: false,
@@ -169,7 +186,7 @@ export default {
       } else if (this.file.type === 'audio/mpeg') {
         this.emitPreloader(true);
         this.sendFile(this.file);
-      }else {
+      } else {
         this.$emit('error', 'Rendering failed: unsupported file type');
       }
     },

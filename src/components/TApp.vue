@@ -1,46 +1,42 @@
 <template>
   <div>
     <t-preloader v-if="isPreloader"/>
-    <v-container>
-      <v-navigation-drawer
-          width="350"
-          app
-          :value="!isPreloader"
-      >
-        <t-parameters
-            :options="options"
-            class="pa-8"
-        />
-      </v-navigation-drawer>
-
-      <v-row>
-        <v-col
-            cols="5"
-            class="secondary white--text pt-8"
-
+    <v-row>
+      <v-col cols="3">
+        <v-navigation-drawer
+            width="100%"
+            :value="!isPreloader"
         >
-          <v-card class="pa-4">
-            <t-file-input
-                class="mb-8"
-                @error="showError($event)"
-                @submit="sendFile($event)"
-                @preloader="togglePreloader($event)"
-            />
-
-
-          </v-card>
-        </v-col>
-
-        <v-col
-            cols="7"
-            class="secondary white--text pt-8"
-        >
-          <t-output
-              :text="outputAsText"
+          <t-parameters
+              :options="options"
+              class="py-8 pl-2"
           />
-        </v-col>
-      </v-row>
-    </v-container>
+        </v-navigation-drawer>
+      </v-col>
+      <v-col
+          cols="4"
+          class="white--text pt-8"
+
+      >
+        <v-card class="pa-4">
+          <t-file-input
+              class="mb-8"
+              @error="showError($event)"
+              @submit="sendFile($event)"
+              @preloader="togglePreloader($event)"
+          />
+        </v-card>
+      </v-col>
+
+      <v-col
+          cols="5"
+          class="white--text pt-8"
+      >
+        <t-output
+            :text="outputAsText"
+        />
+      </v-col>
+    </v-row>
   </div>
 
 </template>
