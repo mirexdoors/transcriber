@@ -349,10 +349,9 @@ export default {
 
             formData.append('data', file);
 
-
-            formData.append('TimeFrame', this.queryParameters.TimeFrame);
-            formData.append('IsShowEmotion', this.queryParameters.IsShowEmotions);
-            formData.append('IsShowSpeaker', this.queryParameters.IsShowSpeaker);
+            formData.append('TimeFrame', JSON.stringify(this.queryParameters.TimeFrame));
+            formData.append('IsShowEmotion', JSON.stringify(this.queryParameters.IsShowEmotions));
+            formData.append('IsShowSpeaker', JSON.stringify(this.queryParameters.IsShowSpeaker));
             formData.append('NamedEntityTypes', JSON.stringify(this.queryParameters.NamedEntityTypes));
             formData.append('DataUrl', '');
             formData.append('IsDebug', '1');

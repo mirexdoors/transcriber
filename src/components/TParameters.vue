@@ -18,7 +18,6 @@
 
 		<v-divider/>
 
-    {{checkboxParams}}
 		<div
 			v-for="checkboxGroup in checkboxParams"
 			:key="checkboxGroup.id"
