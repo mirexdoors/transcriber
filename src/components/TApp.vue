@@ -377,7 +377,7 @@ export default {
                 }
               } else {
                 if (response?.Model) {
-                  this.outputAsText += response.Model?.Text;
+                  this.outputAsText += response.Model?.Data[0].Text;
                   this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath});
                   this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
                   this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath});
@@ -419,7 +419,7 @@ export default {
             }
           } else {
             if (response?.Model) {
-              this.outputAsText += response.Model?.Text;
+              this.outputAsText += response.Model?.Data[0].Text;
               this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath});
               this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
               this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath});
