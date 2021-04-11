@@ -117,6 +117,7 @@ export default {
   data: () => ({
     dragAndDropCapable: false,
     files: [],
+    renderedFiles: [],
     fileLink: '',
     duration: 0,
     isLoading: false,
@@ -178,8 +179,10 @@ export default {
 
     onAfterRecord(data) {
       this.files = [];
+      this.renderedFiles = [];
       this.files.push(new File([data], `record.wav`, {type: "audio/wav"}));
     },
+
 
     triggerFileInput() {
       this.$refs.fileInput.$refs.input.click();
@@ -202,13 +205,16 @@ export default {
           this.emitPreloader(true);
 
           for (let file of rightFiles) {
+
             if (VIDEO_TYPES.includes(file.type)) {
-              file = await this.getAudioBuffer(file);
+              await this.getAudioBuffer(file);
             }
           }
 
+          setTimeout(()=> {
+            this.sendFiles({files: this.renderedFiles, fileUrl: ''});
+          }, 500)
 
-          this.sendFiles({files: rightFiles, fileUrl: ''});
         } else {
           this.$emit('error', 'Rendering failed: unsupported file type');
         }
@@ -252,8 +258,7 @@ export default {
 
             return offlineAudioContext.startRendering().then(renderedBuffer => {
               const wav = toWav(renderedBuffer);
-              const wavFile = new File([wav], `${file.name}.wav`, {type: "audio/wav"});
-              return wavFile;
+              this.renderedFiles.push(new File([wav], `${file.name}.wav`, {type: "audio/wav"}));
             }).catch((err) => {
               this.$emit('error', 'Rendering failed: ' + err);
               this.emitPreloader(false);
