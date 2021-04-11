@@ -213,6 +213,7 @@ export default {
           this.$emit('error', 'Rendering failed: unsupported file type');
         }
       } else if (this.fileLink) {
+        this.emitPreloader(true);
         this.sendFiles({files: [], fileUrl: this.fileLink});
       }
 

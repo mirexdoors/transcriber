@@ -149,7 +149,7 @@ export default {
         },
         {
           id: 4,
-          name: 'IsShowPunct',
+          name: 'IsShowPunctuation',
           group: '',
           init: true,
           values: [],
@@ -304,9 +304,10 @@ export default {
       ],
       queryParameters: {
         TimeFrame: 15,
-        IsShowEmotions: true,
+        IsShowEmotions: false,
         IsShowSpeaker: true,
         IsShowPunct: true,
+        IsShowPunctuation: true,
         NamedEntityTypes: [],
       },
       outputAsText: '',
@@ -356,9 +357,12 @@ export default {
             formData.append('data', file);
 
             formData.append('TimeFrame', JSON.stringify(this.queryParameters.TimeFrame));
+            formData.append('IsTimeFrameLabel', true);
             formData.append('IsShowEmotion', JSON.stringify(this.queryParameters.IsShowEmotions));
+            formData.append('IsShowPunctuation', this.queryParameters.IsShowPunctuation);
             formData.append('IsShowSpeaker', JSON.stringify(this.queryParameters.IsShowSpeaker));
             formData.append('NamedEntityTypes', JSON.stringify(this.queryParameters.NamedEntityTypes));
+            formData.append('IsShowTag', JSON.stringify(this.queryParameters.NamedEntityTypes.length > 0));
             formData.append('DataUrl', '');
             formData.append('UserId', this.userId.toString());
 
@@ -381,7 +385,7 @@ export default {
                 }
               } else {
                 if (response?.Model) {
-                  this.outputAsText += response.Model?.Data[0].Text;
+                  this.outputAsText += response.Model?.ResultText;
                   this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath});
                   this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
                   this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath});
@@ -399,10 +403,12 @@ export default {
 
           formData.append('DataUrl', $event.fileUrl);
           formData.append('Data', '');
-          formData.append('TimeFrame', '15');
-          formData.append('IsShowEmotion', 'true');
-          formData.append('IsShowSpeaker', 'true');
-          formData.append('IsShowTag', 'false');
+          formData.append('IsTimeFrameLabel', true);
+          formData.append('TimeFrame', this.queryParameters.TimeFrame);
+          formData.append('IsShowEmotion', this.queryParameters.IsShowEmotions);
+          formData.append('IsShowSpeaker', this.queryParameters.IsShowSpeaker);
+          formData.append('IsShowPunctuation', this.queryParameters.IsShowPunctuation);
+          formData.append('IsShowTag', JSON.stringify(this.queryParameters.NamedEntityTypes.length > 0));
           formData.append('NamedEntityTypes', JSON.stringify(this.queryParameters.NamedEntityTypes));
 
           formData.append('UserId', this.userId.toString());
@@ -425,7 +431,7 @@ export default {
             }
           } else {
             if (response?.Model) {
-              this.outputAsText += response.Model?.Data[0].Text;
+              this.outputAsText += response.Model?.ResultText;
               this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath});
               this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
               this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath});
