@@ -307,7 +307,7 @@ export default {
         IsShowEmotions: true,
         IsShowSpeaker: true,
         IsShowPunct: true,
-        NamedEntityTypes: ['ORG', 'PERSON', 'LOCATION'],
+        NamedEntityTypes: [],
       },
       outputAsText: '',
       outputFiles: [],
@@ -326,11 +326,17 @@ export default {
     },
 
     changeParameter(param) {
-      if (this.queryParameters?.[param.name]) {
-        this.queryParameters[param.name] = param.val;
+      if (Array.isArray(param.val)) {
+        if (!param.val.length) {
+          this.queryParameters.NamedEntityTypes = this.queryParameters.NamedEntityTypes.filter(type => type !== param.name);
+        } else {
+          this.queryParameters.NamedEntityTypes.push(param.name);
+        }
+      } else {
+        if (this.queryParameters?.[param.name]) {
+          this.queryParameters[param.name] = param.val;
+        }
       }
-
-      console.log(param)
     },
 
     togglePreloader($event) {
@@ -354,11 +360,10 @@ export default {
             formData.append('IsShowSpeaker', JSON.stringify(this.queryParameters.IsShowSpeaker));
             formData.append('NamedEntityTypes', JSON.stringify(this.queryParameters.NamedEntityTypes));
             formData.append('DataUrl', '');
-            formData.append('IsDebug', '1');
             formData.append('UserId', this.userId.toString());
 
             try {
-              const responseFetch = await fetch(CONVERT_ROUTE, {
+              const responseFetch = await fetch(CONVERT_ROUTE + '?IsDebug=1', {
                 method: 'POST',
                 headers: {
                   'Token': TOKEN,
@@ -393,14 +398,16 @@ export default {
           const formData = new FormData();
 
           formData.append('DataUrl', $event.fileUrl);
+          formData.append('Data', '');
           formData.append('TimeFrame', '15');
           formData.append('IsShowEmotion', 'true');
           formData.append('IsShowSpeaker', 'true');
           formData.append('IsShowTag', 'false');
-          formData.append('IsDebug', '1');
+          formData.append('NamedEntityTypes', JSON.stringify(this.queryParameters.NamedEntityTypes));
+
           formData.append('UserId', this.userId.toString());
 
-          const responseFetch = await fetch(CONVERT_ROUTE, {
+          const responseFetch = await fetch(CONVERT_ROUTE + '?isDebug=1', {
             method: 'POST',
             headers: {
               'Token': TOKEN,

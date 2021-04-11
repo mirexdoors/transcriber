@@ -35,7 +35,7 @@
             :value="item.value"
             :label="item.label"
             class="pr-4"
-            @change="emitParameter(item.value, $event)"
+            @change="emitParameter(item.name, $event)"
         />
       </div>
 
