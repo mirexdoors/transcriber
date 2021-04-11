@@ -13,26 +13,30 @@
 			outlined
 			dense
       class="pr-4"
+      @change="emitParameter(select.name, $event)"
 		/>
 
 		<v-divider/>
 
+    {{checkboxParams}}
 		<div
 			v-for="checkboxGroup in checkboxParams"
 			:key="checkboxGroup.id"
 		>
 			<span class="caption">{{ checkboxGroup.label }}</span>
       <div class="d-flex  justify-space-between">
+
         <v-checkbox
             v-for="item in checkboxGroup.values"
             multiple
             dense
             ripple
             color="green darken-4"
-            :key="item.value"
+            :key="item.name"
             :value="item.value"
-            :label="item.value"
+            :label="item.label"
             class="pr-4"
+            @change="emitParameter(item.value, $event)"
         />
       </div>
 
@@ -45,8 +49,10 @@
 			dense
 			color="green darken-4"
 			inset
+      :disabled="switchItem.isDisabled"
 			v-model="switchItem.init"
 			class="caption"
+      @change="emitParameter(switchItem.name, $event)"
 		>
 			<template v-slot:label>
 				<span class="caption">{{ switchItem.label }}</span>
@@ -105,9 +111,11 @@
       }
     },
 
+    methods: {
+      emitParameter(name, val) {
+        this.$emit('change', {name, val});
+      }
+    },
+
   }
 </script>
-
-<style scoped>
-
-</style>
