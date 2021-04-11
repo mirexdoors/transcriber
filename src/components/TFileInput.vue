@@ -191,11 +191,13 @@ export default {
     removeFile(deletedFile) {
       this.files = this.files.filter(file => file.name !== deletedFile.name);
 
+
       if (this.files.length === 0)
         this.isDragover = false;
     },
 
     async submit() {
+      this.renderedFiles = [];
       if (this.files.length > 0) {
         const rightFiles = this.files.filter(file => {
           return VIDEO_TYPES.includes(file.type) || file.type === 'audio/mpeg';
@@ -208,10 +210,12 @@ export default {
 
             if (VIDEO_TYPES.includes(file.type)) {
               await this.getAudioBuffer(file);
+            } else if (file.type === 'audio/mpeg') {
+              this.renderedFiles.push(file);
             }
           }
 
-          setTimeout(()=> {
+          setTimeout(() => {
             this.sendFiles({files: this.renderedFiles, fileUrl: ''});
           }, 500)
 
