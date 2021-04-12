@@ -293,7 +293,7 @@ export default {
 }
 
 .bordered {
-  border: 4px dotted #AEAEAE;
+  border: 2px dotted #AEAEAE;
 }
 
 .hover {
