@@ -17,7 +17,9 @@
           class="white--text pt-8"
 
       >
-        <v-card class="pa-4">
+        <v-card
+            elevation="0"
+            class="pa-4">
           <t-file-input
               class="mb-8"
               @error="showError($event)"
@@ -26,7 +28,10 @@
           />
         </v-card>
       </v-col>
-
+      <v-divider
+          vertical
+          class="divider"
+      />
       <v-col
           cols="5"
           class="white--text pt-8"
@@ -445,3 +450,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.divider {
+  max-height: 800px!important;
+}
+</style>

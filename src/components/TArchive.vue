@@ -20,6 +20,7 @@
         :sort-desc.sync="sortDesc"
         :items-per-page=-1
         hide-default-footer
+        :custom-filter="filterByTags"
         class="elevation-1"
     >
       <template v-slot:item.FilePath="{ item }">
@@ -61,7 +62,7 @@
 
       <template v-slot:item.Tags="{ item }">
 
-        <div v-for="cat in item.Tags" :key="cat">
+        <div v-for="cat in item.Tags" :key="cat.name">
           <span
               v-if="cat.name"
               class="font-weight-bold">
@@ -167,7 +168,18 @@ export default {
 
       return result;
     },
-
+    filterByTags(value, search) {
+      let res = [];
+      if (typeof value === 'object' && value !== null) {
+        for (let type in value) {
+          res.push(value[type]?.values?.indexOf(search) > -1);
+        }
+      } else {
+        if (value)
+          res.push(value.toString().indexOf(search) > -1);
+      }
+      return res.some(val => !!val);
+    },
     getWordsFromText(ranges, text) {
       const result = [];
 

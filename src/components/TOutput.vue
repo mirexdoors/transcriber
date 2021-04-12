@@ -1,5 +1,7 @@
 <template>
-	<v-card class="pa-4">
+	<v-card
+      elevation="0"
+      class="pa-4">
 		<div class="caption mb-2">Output as text:</div>
 		<v-textarea
 			name="text"

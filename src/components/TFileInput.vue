@@ -51,9 +51,11 @@
 
       </div>
     </div>
-
-    <v-card min-height="200"
-            class="d-flex flex-column align-center justify-center pa-4 my-2">
+    <v-divider v-if="files.length > 0" />
+    <v-card
+        elevation="0"
+        min-height="200"
+        class="d-flex flex-column align-center justify-center pa-4 my-2">
       <div class="caption mb-4">
         Also you can record your audio
       </div>
@@ -66,8 +68,9 @@
       </div>
 
     </v-card>
-
+    <v-divider/>
     <v-card
+        elevation="0"
         min-height="200"
         class="d-flex flex-column justify-center align-center justify-center pa-4"
     >
@@ -84,8 +87,9 @@
         />
       </div>
     </v-card>
-
+    <v-divider/>
     <v-card
+        elevation="0"
         min-height="100"
         class="d-flex flex-column justify-center align-center justify-center pa-4"
     >
