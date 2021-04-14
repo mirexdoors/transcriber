@@ -8,13 +8,13 @@
         class="form bordered flex-column align-center justify-center"
     >
 
-      <span class="caption text--secondary">Drop the files (.wav, .mp3, .mov, .mp4) here</span>
+      <span class="caption text--secondary">Загрузите файлы (.wav, .mp3, .mov, .mp4) here</span>
       <div class="caption my-2">or</div>
       <v-btn
           elevation="2"
           @click="triggerFileInput()"
       >
-        Upload
+        Загрузить
       </v-btn>
 
       <v-file-input
@@ -57,7 +57,7 @@
         min-height="200"
         class="d-flex flex-column align-center justify-center pa-4 my-2">
       <div class="caption mb-4">
-        Also you can record your audio
+        Также вы можете записать аудио
       </div>
 
       <div>
@@ -66,17 +66,18 @@
             @result="onAfterRecord"
         />
       </div>
-
     </v-card>
+
     <v-divider/>
+
     <v-card
         elevation="0"
         min-height="200"
         class="d-flex flex-column justify-center align-center justify-center pa-4"
     >
       <div>
-        <div class="caption mb-4">You can download file from remote resourse (only .wav or .mp3):</div>
-        <div class="caption mb-4">It's disabled when file upload checked</div>
+        <div class="caption mb-4">Вы можете загрузить файл по ссылке (.wav или .mp3):</div>
+        <div class="caption mb-4">Эта опция неактивна, когда есть загруженный файл</div>
 
         <v-text-field
             v-model="fileLink"
@@ -98,7 +99,7 @@
           class="submit-button primary"
           @click="submit()"
       >
-        Submit
+        Распознать
         <v-icon
             right
             dark

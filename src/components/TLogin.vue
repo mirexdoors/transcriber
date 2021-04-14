@@ -29,7 +29,7 @@
             class="mr-4 accent--text"
             @click="validate"
         >
-          Sign In
+          Войти
         </v-btn>
 
       </v-form>

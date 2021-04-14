@@ -9,7 +9,7 @@
 				color="primary error"
 				dark
 			>
-				Error
+				Ошибка
 			</v-toolbar>
 
 			<v-card-text>
@@ -21,7 +21,7 @@
 					text
 					@click="resetError"
 				>
-					Close
+					Закрыть
 				</v-btn>
 			</v-card-actions>
 		</v-card>

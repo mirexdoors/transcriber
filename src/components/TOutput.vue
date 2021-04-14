@@ -2,7 +2,7 @@
 	<v-card
       elevation="0"
       class="pa-4">
-		<div class="caption mb-2">Output as text:</div>
+		<div class="caption mb-2">Результат:</div>
 		<v-textarea
 			name="text"
 			filled
@@ -12,7 +12,7 @@
 		/>
 
 		<div style="min-height: 100px;">
-			<div class="caption">Download output</div>
+			<div class="caption">Скачать результат:</div>
 			<v-chip-group>
 				<v-chip
 					v-for="file in files"

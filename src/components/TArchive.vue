@@ -1,7 +1,7 @@
 <template>
   <div class="pb-8">
     <v-card-title>
-      Archive
+      Архив
       <v-spacer></v-spacer>
       <v-text-field
           v-model="search"
@@ -93,16 +93,16 @@ export default {
           value: 'Id',
         },
         {
-          text: 'Date',
+          text: 'Дата',
           align: 'start',
           sortable: false,
           value: 'CreatedAt',
         },
         // {text: 'Filename', value: 'filename'},
         // {text: 'Size (KB)', value: 'size'},
-        {text: 'Tags', value: 'Tags'},
-        {text: 'Link', value: 'FilePath'},
-        {text: 'Actions', value: 'actions', sortable: false},
+        {text: 'Тэги', value: 'Tags'},
+        {text: 'Ссылка', value: 'FilePath'},
+        {text: 'Действия', value: 'actions', sortable: false},
       ],
       items: [],
     }

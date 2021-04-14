@@ -17,7 +17,7 @@
           class="preloader"
           indeterminate
       >
-        <span class="subtitle-2">Waiting ...</span>
+        <span class="subtitle-2">Подождите ...</span>
       </v-progress-circular>
     </v-layout>
   </v-overlay>

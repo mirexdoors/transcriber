@@ -16,11 +16,11 @@
         </router-link>
 
         <div class="d-flex align-center">
-          <router-link to="/" class="px-4 font-weight-bold">Transcriber</router-link>
+          <router-link to="/" class="px-4 font-weight-bold">Речь в текст</router-link>
 
-          <router-link to="/about" class="px-4 font-weight-bold">About</router-link>
+          <router-link to="/about" class="px-4 font-weight-bold">О приложении</router-link>
 
-          <router-link to="/archive" class="px-4 font-weight-bold">Archive</router-link>
+          <router-link to="/archive" class="px-4 font-weight-bold">Архив</router-link>
         </div>
 
         <v-btn

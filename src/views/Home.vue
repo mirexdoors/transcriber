@@ -1,8 +1,7 @@
 <template>
   <div>
-
-    {{fileUrl}}
     <t-app @update:error="error = $event" @preloader="$emit('preloader', $event)" />
+
     <t-error
         v-if="error"
         :error="error"
