@@ -96,7 +96,7 @@
     >
       <v-btn
           :disabled="!files.length && !fileLink"
-          class="submit-button primary"
+          class="submit-button primary text-center"
           @click="submit()"
       >
         Распознать

@@ -9,7 +9,7 @@
         <v-text-field
             v-model="login"
             :rules="loginRules"
-            label="Login"
+            label="Логин"
             required
             class="mb-4"
         />
@@ -17,7 +17,7 @@
         <v-text-field
             v-model="password"
             :rules="passwordRules"
-            label="Password"
+            label="Пароль"
             type="password"
             required
             class="mb-4"
@@ -66,10 +66,10 @@ export default {
           sessionStorage.setItem('user_id', user.id);
           this.$emit('login');
         } else {
-          this.$emit('update:error', 'Invalid login or password. Please, try again');
+          this.$emit('update:error', 'Неверный логин и/или пароль. Пожалуйста, попробуйте еще раз.');
         }
       } else {
-        this.$emit('update:error', 'Invalid login or password. Please, try again');
+        this.$emit('update:error', 'Неверный логин и/или пароль. Пожалуйста, попробуйте еще раз.');
       }
     },
   },

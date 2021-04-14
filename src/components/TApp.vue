@@ -1,9 +1,10 @@
 <template>
   <div>
-    <v-row>
+    <v-row class="accent">
       <v-col cols="3">
         <v-navigation-drawer
             width="100%"
+            class="elevation-0"
         >
           <t-parameters
               :options="options"
@@ -129,19 +130,19 @@ export default {
           init: null,
           values: [
             {
-              label: 'Locations',
+              label: 'Места',
               name: 'LOCATION',
               value: true,
               isDisabled: false,
             },
             {
-              label: 'Organizations',
+              label: 'Организации',
               name: 'ORG',
               value: true,
               isDisabled: false,
             },
             {
-              label: 'Persons',
+              label: 'Персоналии',
               value: true,
               name: 'PERSON',
               isDisabled: false,

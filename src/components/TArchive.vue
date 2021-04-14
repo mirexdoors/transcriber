@@ -6,7 +6,7 @@
       <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
-          label="Search"
+          label="Поиск"
           single-line
           hide-details
       ></v-text-field>
@@ -32,6 +32,18 @@
         </a>
       </template>
 
+      <template v-slot:item.Files="{ item }">
+        <v-chip-group>
+          <v-chip
+              v-for="(file, key) in item.Files"
+              :key="key"
+              target="_blank"
+              :href="file"
+          >
+            {{ key }}
+          </v-chip>
+        </v-chip-group>
+      </template>
       <template v-slot:item.actions="{ item }">
         <a
             :href="host + item.FilePath"
@@ -91,18 +103,37 @@ export default {
           text: '#',
           align: 'start',
           value: 'Id',
+          width: '5%',
         },
         {
           text: 'Дата',
           align: 'start',
           sortable: false,
           value: 'CreatedAt',
+          width: '10%',
         },
-        // {text: 'Filename', value: 'filename'},
-        // {text: 'Size (KB)', value: 'size'},
-        {text: 'Тэги', value: 'Tags'},
-        {text: 'Ссылка', value: 'FilePath'},
-        {text: 'Действия', value: 'actions', sortable: false},
+        {
+          text: 'Тэги',
+          value: 'Tags',
+          width: '20%',
+        },
+        {
+          text: 'Результаты',
+          value: 'Files',
+          width: '20%',
+        },
+        {
+          text: 'Ссылка',
+          value: 'FilePath',
+          width: '35%',
+          sortable: false,
+        },
+        {
+          text: 'Действия',
+          value: 'actions',
+          sortable: false,
+          width: '10%'
+        },
       ],
       items: [],
     }
@@ -207,6 +238,12 @@ export default {
         });
         const response = await responseJson.json();
         this.items = response.List.map(item => {
+          item.Files = {
+            txt: item.ResultTextPath,
+            html: item.ResultHtmlPath,
+            doc: item.ResultDocPath,
+            pdf: item.ResultPdfPath,
+          }
           item.CreatedAt = this.formattedDate(new Date(item.CreatedAt));
           item.Tags = this.getTags(JSON.parse(item.RawResult).result.ner);
           return item;
