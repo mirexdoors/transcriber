@@ -59,7 +59,7 @@
 		</v-switch>
 
 
-		<div class="caption MB-2">Text domains</div>
+		<div class="caption MB-2">Текстовые домены:</div>
 
 		<v-switch
 			v-for="switchItem in textDomains"
