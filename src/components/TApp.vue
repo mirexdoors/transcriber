@@ -392,10 +392,10 @@ export default {
               } else {
                 if (response?.Model) {
                   this.outputAsText += response.Model?.ResultText;
-                  this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath});
-                  this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
-                  this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath});
-                  this.outputFiles.push({ext: '.html', url: SERVER + response.Model.ResultHtmlPath});
+                  this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath, name: file.name});
+                  this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath, name: file.name});
+                  this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath, name: file.name});
+                  this.outputFiles.push({ext: '.html', url: SERVER + response.Model.ResultHtmlPath, name: file.name});
 
                 }
               }
