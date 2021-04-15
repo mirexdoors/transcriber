@@ -391,7 +391,7 @@ export default {
                 }
               } else {
                 if (response?.Model) {
-                  this.outputAsText += response.Model?.ResultText;
+                  this.outputAsText += file.name + '\n' + response.Model?.ResultText + '\n' + '\n';
                   this.outputFiles.push({ext: '.pdf', url: SERVER + response.Model.ResultFilePdfPath, name: file.name});
                   this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath, name: file.name});
                   this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath, name: file.name});

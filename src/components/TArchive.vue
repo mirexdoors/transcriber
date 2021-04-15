@@ -241,8 +241,8 @@ export default {
           item.Files = {
             txt: item.ResultTextPath,
             html: item.ResultHtmlPath,
-            doc: item.ResultDocPath,
-            pdf: item.ResultPdfPath,
+            doc: item.ResultFileDocPath,
+            pdf: item.ResultFilePdfPath,
           }
           item.CreatedAt = this.formattedDate(new Date(item.CreatedAt));
           item.Tags = this.getTags(JSON.parse(item.RawResult).result.ner);
@@ -277,4 +277,3 @@ export default {
   }
 }
 </script>
-
