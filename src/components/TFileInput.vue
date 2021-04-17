@@ -267,7 +267,8 @@ export default {
 
             return offlineAudioContext.startRendering().then(renderedBuffer => {
               const wav = toWav(renderedBuffer);
-              this.renderedFiles.push(new File([wav], `${file.name}.wav`, {type: "audio/wav"}));
+              let fileName = file.name.indexOf('.wav') > -1 ? file.name : `${file.name}.wav`;
+              this.renderedFiles.push(new File([wav], fileName, {type: "audio/wav"}));
             }).catch((err) => {
               this.$emit('error', 'Rendering failed: ' + err);
               this.emitPreloader(false);
