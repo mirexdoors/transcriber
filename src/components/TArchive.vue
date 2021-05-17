@@ -115,14 +115,14 @@
 
     data() {
       return {
-        sortBy: 'Id',
+        sortBy: 'RecordNumber',
         sortDesc: true,
         search: '',
         headers: [
           {
             text: '#',
             align: 'start',
-            value: 'Id',
+            value: 'RecordNumber',
             width: '5%',
           },
           {
