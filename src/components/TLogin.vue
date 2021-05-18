@@ -5,6 +5,7 @@
           ref="form"
           v-model="isValid"
           lazy-validation
+          @keyup.native.enter="validate"
       >
         <v-text-field
             v-model="login"
@@ -27,6 +28,7 @@
             :disabled="!isValid"
             color="green darken-4"
             class="mr-4 accent--text"
+            type="submit"
             @click="validate"
         >
           Войти

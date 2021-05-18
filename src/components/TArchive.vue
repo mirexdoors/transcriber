@@ -205,31 +205,37 @@
           LOCATIONS: '',
           PERSONS: ''
         };
-        const text = ner[0].sent;
-        const namedEntities = ner[0].named_entities;
 
-        for (let category in namedEntities) {
+        ner.forEach(nerItem => {
+          const text = nerItem.sent;
+          const namedEntities = nerItem.named_entities;
 
-          if (namedEntities[category].length > 0) {
-            switch (category) {
-              case 'ORG':
-                result.ORG = {name: 'ORG', values: this.getWordsFromText(namedEntities[category], text).join(',')};
-                break;
-              case 'LOCATION':
-                result.LOCATIONS = {
-                  name: 'LOCATIONS',
-                  values: this.getWordsFromText(namedEntities[category], text).join(',')
-                };
-                break;
-              case 'PER':
-                result.PERSONS = {
-                  name: 'PERSONS',
-                  values: this.getWordsFromText(namedEntities[category], text).join(',')
-                };
-                break;
+          for (let category in namedEntities) {
+
+            if (namedEntities[category].length > 0) {
+              switch (category) {
+                case 'ORG':
+                  result.ORG = {name: 'ORG', values: this.getWordsFromText(namedEntities[category], text).join(',')};
+                  break;
+                case 'LOCATION':
+                  result.LOCATIONS = {
+                    name: 'LOCATIONS',
+                    values: this.getWordsFromText(namedEntities[category], text).join(',')
+                  };
+                  break;
+                case 'PER':
+                  result.PERSONS = {
+                    name: 'PERSONS',
+                    values: this.getWordsFromText(namedEntities[category], text).join(',')
+                  };
+                  break;
+              }
             }
           }
-        }
+        });
+
+
+
 
         return result;
       },

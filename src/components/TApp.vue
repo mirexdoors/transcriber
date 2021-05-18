@@ -442,9 +442,10 @@ export default {
               this.outputFiles.push({ext: '.doc', url: SERVER + response.Model.ResultFileDocPath});
               this.outputFiles.push({ext: '.txt', url: SERVER + response.Model.ResultTextPath});
               this.outputFiles.push({ext: '.html', url: SERVER + response.Model.ResultHtmlPath});
-
             }
           }
+
+          this.$emit('preloader', false);
         }
       }
     },
