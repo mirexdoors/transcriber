@@ -13,7 +13,7 @@ const routes = [
   {
     path: '/archive',
     name: 'Archive',
-    component:  () => import(/* webpackChunkName: "about" */ '../views/Archive.vue')
+    component:  () => import(/* webpackChunkName: "archive" */ '../views/Archive.vue')
   },
   {
     path: '/about',
