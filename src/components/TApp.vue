@@ -13,10 +13,10 @@
           />
         </v-navigation-drawer>
       </v-col>
+
       <v-col
           cols="4"
           class="white--text pt-8"
-
       >
         <v-card
             elevation="0"
@@ -29,10 +29,12 @@
           />
         </v-card>
       </v-col>
+
       <v-divider
           vertical
           class="divider"
       />
+
       <v-col
           cols="5"
           class="white--text pt-8"
@@ -340,7 +342,7 @@ export default {
           this.queryParameters.NamedEntityTypes.push(param.name);
         }
       } else {
-        if (this.queryParameters?.[param.name]) {
+        if (this.queryParameters[param.name] !== undefined) {
           this.queryParameters[param.name] = param.val;
         }
       }
