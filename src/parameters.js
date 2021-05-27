@@ -1,7 +1,9 @@
 export const SERVER = 'https://www.roza.ai';
-export const API = SERVER + '/api/v1';
+export const API_V1 = SERVER + '/api/v1';
+export const API = SERVER + '/api/v2';
+export const  CHECK_CONVERTER_LOG = API + '/checkConverterLog';
 
-export const  LOG_ROUTE = API + '/converterLog';
+export const  LOG_ROUTE = API_V1 + '/converterLog';
 export const  CONVERT_ROUTE = API + '/convertFile';
 
 export const TOKEN = 'sdfd-rhhv-dfgj-1347';

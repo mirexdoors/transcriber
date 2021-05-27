@@ -200,44 +200,46 @@
       },
 
       getTags(ner) {
-        const result = {
-          ORG: '',
-          LOCATIONS: '',
-          PERSONS: ''
-        };
+        if (ner?.length > 0) {
+          const result = {
+            ORG: '',
+            LOCATIONS: '',
+            PERSONS: ''
+          };
 
-        ner.forEach(nerItem => {
-          const text = nerItem.sent;
-          const namedEntities = nerItem.named_entities;
+          ner.forEach(nerItem => {
+            const text = nerItem.sent;
+            const namedEntities = nerItem.named_entities;
 
-          for (let category in namedEntities) {
+            for (let category in namedEntities) {
 
-            if (namedEntities[category].length > 0) {
-              switch (category) {
-                case 'ORG':
-                  result.ORG = {name: 'ORG', values: this.getWordsFromText(namedEntities[category], text).join(',')};
-                  break;
-                case 'LOCATION':
-                  result.LOCATIONS = {
-                    name: 'LOCATIONS',
-                    values: this.getWordsFromText(namedEntities[category], text).join(',')
-                  };
-                  break;
-                case 'PER':
-                  result.PERSONS = {
-                    name: 'PERSONS',
-                    values: this.getWordsFromText(namedEntities[category], text).join(',')
-                  };
-                  break;
+              if (namedEntities[category].length > 0) {
+                switch (category) {
+                  case 'ORG':
+                    result.ORG = {name: 'ORG', values: this.getWordsFromText(namedEntities[category], text).join(',')};
+                    break;
+                  case 'LOCATION':
+                    result.LOCATIONS = {
+                      name: 'LOCATIONS',
+                      values: this.getWordsFromText(namedEntities[category], text).join(',')
+                    };
+                    break;
+                  case 'PER':
+                    result.PERSONS = {
+                      name: 'PERSONS',
+                      values: this.getWordsFromText(namedEntities[category], text).join(',')
+                    };
+                    break;
+                }
               }
             }
-          }
-        });
+          });
 
 
-
-
-        return result;
+          return result;
+        } else {
+          return  {};
+		}
       },
 
       filterByTags(value, search) {
@@ -286,9 +288,9 @@
               html: item.ResultHtmlPath,
               doc: item.ResultFileDocPath,
               pdf: item.ResultFilePdfPath,
-            }
+            };
             item.CreatedAt = this.formattedDate(new Date(item.CreatedAt));
-            item.Tags = this.getTags(JSON.parse(item.RawResult).result.ner);
+            item.Tags = this.getTags(JSON.parse(item.RawResult).result?.ner);
             return item;
           });
         } catch (e) {

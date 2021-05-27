@@ -1,6 +1,9 @@
 <template>
   <v-app class="accent">
-    <t-preloader v-if="isPreloader"/>
+    <t-preloader
+        v-if="preloaderValue < 100"
+        :value="preloaderValue"
+    />
     <v-app-bar
         app
         light
@@ -40,7 +43,10 @@
           @login="login"
           @update:error="error = $event"
       />
-      <router-view v-else  @preloader="togglePreloader($event)"/>
+      <router-view
+          v-else
+           @preloader="togglePreloader($event)"
+      />
     </v-main>
 
     <t-error
@@ -68,12 +74,11 @@ export default {
   data: () => ({
     isAuthorized: false,
     error: '',
-    isPreloader: false,
+    preloaderValue: 100,
   }),
 
   mounted() {
     this.isAuthorized = sessionStorage.getItem('user_id');
-
   },
 
   methods: {
@@ -91,7 +96,7 @@ export default {
     },
 
     togglePreloader($event) {
-      this.isPreloader = $event;
+      this.preloaderValue = $event;
     }
   },
 };

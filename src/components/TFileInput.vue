@@ -9,7 +9,9 @@
     >
 
       <span class="caption text--secondary">Загрузите файлы (.wav, .mp3, .mov, .mp4) сюда</span>
+
       <div class="caption my-2">или</div>
+
       <v-btn
           elevation="2"
           @click="triggerFileInput()"
@@ -91,7 +93,7 @@
             outlined
             dense
             :disabled="files.length > 0"
-            label="File link"
+            label="Ссылка на файл"
         />
       </div>
     </v-card>
@@ -102,7 +104,7 @@
         class="d-flex flex-column justify-center align-center justify-center pa-4"
     >
       <v-btn
-          :disabled="!files.length && !fileLink"
+          :disabled="(!files.length && !fileLink) || isSubmitted"
           class="submit-button primary text-center"
           @click="submit()"
       >
@@ -133,10 +135,10 @@ export default {
     files: [],
     renderedFiles: [],
     fileLink: '',
-    duration: 0,
     isLoading: false,
     isDragover: false,
     isRecordActive: false,
+    isSubmitted: false,
   }),
 
   mounted() {
@@ -188,8 +190,8 @@ export default {
       return null;
     },
 
-    emitPreloader(bool) {
-      this.$emit('preloader', bool);
+    emitPreloader(percent) {
+      this.$emit('preloader', percent);
     },
 
     determineDragAndDropCapable() {
@@ -225,13 +227,14 @@ export default {
 
     async submit() {
       this.renderedFiles = [];
+      this.isSubmitted = true;
       if (this.files.length > 0) {
         const rightFiles = this.files.filter(file => {
           return VIDEO_TYPES.includes(file.type) || file.type === 'audio/mpeg';
         });
 
         if (rightFiles.length > 0) {
-          this.emitPreloader(true);
+          this.emitPreloader(0);
 
           for (let file of rightFiles) {
 
@@ -244,16 +247,18 @@ export default {
 
           setTimeout(() => {
             this.sendFiles({files: this.renderedFiles, fileUrl: ''});
-          }, 500)
-
+          }, 500);
         } else {
           this.$emit('error', 'Rendering failed: unsupported file type');
         }
       } else if (this.fileLink) {
-        this.emitPreloader(true);
+        this.emitPreloader(0);
         this.sendFiles({files: [], fileUrl: this.fileLink});
       }
 
+      setTimeout(() => {
+        this.isSubmitted = false;
+      }, 2500);
     },
 
     sendFiles(files) {
@@ -277,7 +282,7 @@ export default {
 
           if (duration > 300) {
             this.$emit('error', 'Audio length must be less than 5 minutes');
-            this.emitPreloader(false);
+            this.emitPreloader(100);
           } else {
             const offlineAudioContext = new OfflineAudioContext(numberOfChannels, sampleRate * duration, sampleRate);
             const soundSource = offlineAudioContext.createBufferSource();
@@ -293,12 +298,12 @@ export default {
               this.renderedFiles.push(new File([wav], fileName, {type: "audio/wav"}));
             }).catch((err) => {
               this.$emit('error', 'Rendering failed: ' + err);
-              this.emitPreloader(false);
+              this.emitPreloader(100);
             });
           }
         }).catch(e => {
           this.$emit('error', e.message);
-          this.emitPreloader(false);
+          this.emitPreloader(100);
         });
       };
 
