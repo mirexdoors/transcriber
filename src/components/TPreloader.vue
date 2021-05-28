@@ -5,22 +5,21 @@
 		:value="overlay"
 		:z-index="zIndex"
 	>
-		<v-layout
-            row
-			wrap
-			align-center
-			justify-center
-			class="mx-auto my-auto">
-			<v-progress-circular
-				:size="250"
-				:width="15"
-				color="primary"
+		<v-row
+			align="center"
+			justify="center"
+		>
+			<v-progress-linear
+				:value="value"
+				height="25"
+				color="teal accent-4"
+				rounded
 				class="preloader"
-				indeterminate
+				striped
 			>
-				<span class="display-2 font-weight-bold">{{ preloaderText }}</span>
-			</v-progress-circular>
-		</v-layout>
+				<strong>{{ preloaderText }}</strong>
+			</v-progress-linear>
+		</v-row>
 	</v-overlay>
 </template>
 
@@ -30,7 +29,7 @@
 
     data: () => ({
       absolute: true,
-      opacity: 0.6,
+      opacity: 0.7,
       overlay: true,
       zIndex: 9999,
     }),
@@ -47,9 +46,14 @@
   }
 </script>
 
-<style scoped>
-	.preloader {
-		top: 50% !important;
-		transform: translateY(-50%) !important;
+<style>
+	.preloader.preloader {
+		width: 500px;
 	}
+
+	.v-application--wrap {
+		height: 100vh;
+		overflow: hidden;
+	}
+
 </style>
