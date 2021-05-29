@@ -473,12 +473,13 @@
         if (response?.Model) {
           if (response.Model.Status === 'Processing') {
             if (!this.firstEstimate) {
-              this.firstEstimate = (response?.Model?.TimeEstimate + (response?.Model?.TimeEstimate * 0.2)).toFixed(0);
+              this.firstEstimate = (response?.Model?.TimeEstimate + (response?.Model?.TimeEstimate * 0.3)).toFixed(0);
 			}
 
             const estimatePercent = 100 - ((response?.Model?.TimeEstimate /  this.firstEstimate)*100).toFixed(0);
 
-            this.$emit('preloader', estimatePercent);
+
+            this.$emit('update-preloader', {id:file.ConverterLogId, name, percent: estimatePercent});
             this.checkConverFile(file, name);
           } else {
               this.outputAsText += name + '\n' + response.Model?.ConverterLog?.ResultText + '\n' + '\n';
@@ -489,7 +490,7 @@
 
             this.firstEstimate = null;
             this.processingFiles = [];
-            this.$emit('preloader', 100);
+            this.$emit('update-preloader', {id:file.ConverterLogId, name, percent: 100});
           }
         }
       }

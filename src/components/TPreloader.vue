@@ -5,21 +5,46 @@
 		:value="overlay"
 		:z-index="zIndex"
 	>
-		<v-row
-			align="center"
-			justify="center"
+		<v-col
+			justify="<v-row"
 		>
-			<v-progress-linear
-				:value="value"
-				height="25"
-				color="teal accent-4"
-				rounded
-				class="preloader"
-				striped
+			<div
+				v-for="(value, key) in values"
+				:key="key"
+				class="mb-8"
 			>
-				<strong>{{ preloaderText }}</strong>
-			</v-progress-linear>
-		</v-row>
+				<strong class="mb-0">{{ value.name }}</strong>
+
+				<v-row class="align-center">
+					<v-progress-linear
+						:value="value.percent"
+						height="25"
+						color="teal accent-4"
+						rounded
+						class="preloader my-0"
+						striped
+					>
+						<strong>{{ showPercent(value.percent) }}</strong>
+					</v-progress-linear>
+
+					<v-btn
+						color="red"
+						dark
+						class="ma-2"
+						:disabled="!value.id"
+						@click="decline(value.name)"
+					>
+						Отменить
+						<v-icon
+							dark
+							right
+						>
+							mdi-cancel
+						</v-icon>
+					</v-btn>
+				</v-row>
+			</div>
+		</v-col>
 	</v-overlay>
 </template>
 
@@ -35,14 +60,30 @@
     }),
 
     props: {
-      value: Number,
+      values: Array,
     },
 
-    computed: {
-      preloaderText() {
-        return `${this.value}%`;
+    mounted() {
+      const appWrap = document.querySelector('.v-application--wrap');
+      appWrap.style.height = '100vh';
+      appWrap.style.overflow = 'hidden';
+    },
+
+	destroyed() {
+      const appWrap = document.querySelector('.v-application--wrap');
+      appWrap.style.height = '100%';
+      appWrap.style.overflow = 'auto';
+    },
+
+	methods: {
+      decline(fileName) {
+        this.$emit('decline', fileName);
+      },
+
+      showPercent(percent) {
+		return percent <= 100 ? `${percent}%` :  `100%`;
       }
-    }
+	}
   }
 </script>
 
@@ -50,10 +91,4 @@
 	.preloader.preloader {
 		width: 500px;
 	}
-
-	.v-application--wrap {
-		height: 100vh;
-		overflow: hidden;
-	}
-
 </style>

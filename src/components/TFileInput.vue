@@ -234,9 +234,10 @@ export default {
         });
 
         if (rightFiles.length > 0) {
-          this.emitPreloader(0);
+          const preloadedFilesArray = [];
 
           for (let file of rightFiles) {
+            preloadedFilesArray.push({name: file.name, percent: 0});
 
             if (VIDEO_TYPES.includes(file.type)) {
               await this.getAudioBuffer(file);
@@ -245,14 +246,16 @@ export default {
             }
           }
 
+          this.emitPreloader(preloadedFilesArray);
+
           setTimeout(() => {
             this.sendFiles({files: this.renderedFiles, fileUrl: ''});
-          }, 500);
+          }, 700);
         } else {
           this.$emit('error', 'Rendering failed: unsupported file type');
         }
       } else if (this.fileLink) {
-        this.emitPreloader(0);
+        this.emitPreloader({name: this.fileLink, percent: 0});
         this.sendFiles({files: [], fileUrl: this.fileLink});
       }
 
@@ -282,7 +285,7 @@ export default {
 
           if (duration > 300) {
             this.$emit('error', 'Audio length must be less than 5 minutes');
-            this.emitPreloader(100);
+            this.emitPreloader([]);
           } else {
             const offlineAudioContext = new OfflineAudioContext(numberOfChannels, sampleRate * duration, sampleRate);
             const soundSource = offlineAudioContext.createBufferSource();
@@ -298,12 +301,12 @@ export default {
               this.renderedFiles.push(new File([wav], fileName, {type: "audio/wav"}));
             }).catch((err) => {
               this.$emit('error', 'Rendering failed: ' + err);
-              this.emitPreloader(100);
+              this.emitPreloader([]);
             });
           }
         }).catch(e => {
           this.$emit('error', e.message);
-          this.emitPreloader(100);
+          this.emitPreloader([]);
         });
       };
 

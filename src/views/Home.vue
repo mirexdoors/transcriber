@@ -1,6 +1,10 @@
 <template>
   <div>
-    <t-app @update:error="error = $event" @preloader="$emit('preloader', $event)" />
+    <t-app
+        @update:error="error = $event"
+        @preloader="$emit('preloader', $event)"
+        @update-preloader="$emit('update-preloader', $event)"
+    />
 
     <t-error
         v-if="error"
