@@ -16,7 +16,7 @@
 			<v-btn
 				depressed
 				color="error"
-				:disabled="selected.length < 1 || isDeleteBtnClicked"
+				:disabled="selected.length < 1 || isDeleteBtnClicked || items.length < 1"
                 @click="deleteSelectedRows"
 			>
 				Удалить

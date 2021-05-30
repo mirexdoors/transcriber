@@ -3,7 +3,7 @@
 		<t-preloader
 			v-if="preloaderValues.length"
 			:values="preloaderValues"
-            @decline="declineFile($event)"
+			@decline="declineFile($event)"
 		/>
 
 		<v-app-bar
@@ -22,18 +22,18 @@
 
 				<div class="d-flex align-center">
 					<router-link
-                        to="/"
+						to="/"
 						class="px-4 font-weight-bold">
-                      Речь в текст
+						Речь в текст
 					</router-link>
 
 					<router-link
-                        to="/about"
+						to="/about"
 						class="px-4 font-weight-bold">О приложении
 					</router-link>
 
 					<router-link
-                        to="/archive"
+						to="/archive"
 						class="px-4 font-weight-bold">Архив
 					</router-link>
 				</div>
@@ -74,6 +74,7 @@
   import TLogin from "@/components/TLogin";
   import TError from "./components/TError";
   import TPreloader from "@/components/TPreloader";
+  import {TOKEN, LOG_ROUTE} from "./parameters";
 
   export default {
     name: 'App',
@@ -115,13 +116,14 @@
       updatePreloader(file) {
         if (this.preloaderValues.length === 0) return;
 
-        const currentValues = Object.assign({}, this.preloaderValues);
+        const currentValues = Object.assign([], this.preloaderValues);
         const processedValue = currentValues.find(val => val.name === file.name);
 
         if (processedValue) {
           processedValue.percent = file.percent;
+          processedValue.id = file.id;
 
-          if (processedValue.some(processedValue => processedValue.percent < 100)) {
+          if (currentValues.some(currentValue => currentValue.percent < 100)) {
             this.preloaderValues = currentValues;
           } else {
             this.preloaderValues = [];
@@ -130,9 +132,28 @@
       },
 
       declineFile(declinedFileName) {
+        const fileId = this.preloaderValues.find(file => file.name === declinedFileName)?.id;
         this.preloaderValues = this.preloaderValues.filter(file => file.name !== declinedFileName);
 
-        //Здесь же нужно сходить с запросом на удаление в апи лога и с id  файла
+        if (fileId) {
+          this.deleteFileFromLog(fileId)
+          //Здесь же нужно сходить с запросом на удаление в апи лога и с id  файла
+        }
+      },
+
+      async deleteFileFromLog(id) {
+        const route = new URL(LOG_ROUTE) + '/' + id + '?IsDebug=1';
+
+        try {
+          fetch(route.toString(), {
+            method: 'DELETE',
+            headers: {
+              'Token': TOKEN,
+            },
+          });
+        } catch (e) {
+          console.error(e)
+        }
       }
     },
   };
