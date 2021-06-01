@@ -391,6 +391,7 @@
                 if (!responseFetch.ok) {
 
                   if (response.Error) {
+                    this.togglePreloader([]);
                     this.$emit('update:error', response.Errors[0].ErrorDebug);
                   }
                 } else {
