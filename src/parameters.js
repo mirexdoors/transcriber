@@ -1,4 +1,4 @@
-export const SERVER = 'https://www.roza.ai';
+export const SERVER = 'https://airoza.ru';
 export const API_V1 = SERVER + '/api/v1';
 export const API = SERVER + '/api/v2';
 export const  CHECK_CONVERTER_LOG = API + '/checkConverterLog';
