@@ -40,7 +40,8 @@
 </template>
 
 <script>
-import {users} from "@/users";
+import { users } from "@/usersHash";
+import { sha256 } from "@/helpers";
 
 export default {
   name: "TLogin",
@@ -62,7 +63,7 @@ export default {
       this.$refs.form.validate();
 
       if (this.isValid && this.login && this.password) {
-        const user = users.find(user => user.login === this.login && user.password === this.password);
+        const user = users.find(async (user) => user.login === this.login && user.hash === await this.hashPassword(this.password));
 
         if (user?.id) {
           sessionStorage.setItem('user_id', user.id);
@@ -74,6 +75,9 @@ export default {
         this.$emit('update:error', 'Неверный логин и/или пароль. Пожалуйста, попробуйте еще раз.');
       }
     },
+    async hashPassword(str) {
+      return await sha256(str);
+    }
   },
 }
 </script>
