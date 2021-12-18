@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { users } from "@/usersHash";
+import { users } from "@/users";
 import { sha256 } from "@/helpers";
 
 export default {
