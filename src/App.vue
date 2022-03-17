@@ -14,7 +14,7 @@
 			<div class="justify-space-between accent d-flex align-center app-bar__wrapper">
 				<router-link to="/">
 					<img
-						src="../assets/logo.png"
+						src="../assets/solo.png"
 						style="height: 80px;"
 						class="d-block pa-4"
 					/>
